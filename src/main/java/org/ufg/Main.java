@@ -19,7 +19,7 @@ public class Main {
             databases.forEach(db -> System.out.println(db.toJson()));
         }
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
-        server.createContext("/api/hello", new MyHandler());
+        server.createContext("/api/initialize", new MyHandler());
         server.setExecutor(null);
         server.start();
     }
@@ -27,7 +27,7 @@ public class Main {
     static class MyHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange t) throws IOException {
-            String response = "Hello, this is your API!";
+            var response = "inicializacao do projeto cloud";
             t.sendResponseHeaders(200, response.length());
             OutputStream os = t.getResponseBody();
             os.write(response.getBytes());
