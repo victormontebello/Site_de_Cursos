@@ -2,6 +2,7 @@ package org.ufg;
 import com.sun.net.httpserver.*;
 import org.apache.log4j.BasicConfigurator;
 import org.ufg.Infraestrutura.MongoConfig;
+import org.ufg.Infraestrutura.Servicos.ServicoCurso;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -13,6 +14,5 @@ public class Main {
         server.createContext("/api/initialize", new MongoConfig.ContextHandler());
         server.setExecutor(null);
         server.start();
-        MongoConfig.Connect();
     }
 }
