@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public interface ICursoRepository {
     ArrayList<Document> obterTodos();
-    void Salvar();
+    void Salvar(Curso curso);
     Curso obterPorId(String id);
     void Atualizar(Curso curso);
     void Deletar(String id);
