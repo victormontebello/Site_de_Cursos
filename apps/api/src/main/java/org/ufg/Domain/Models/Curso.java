@@ -1,4 +1,6 @@
 package org.ufg.Domain.Models;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.mongodb.lang.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,37 +19,28 @@ import java.util.ArrayList;
 @NoArgsConstructor
 public class Curso {
 
-    @MongoId
     public String Id;
 
-    @NotBlank(message = "O nome não pode ser vazio")
-    @Size(min = 2, max = 100, message = "o nome deve ter no mínimo 2 e no máximo 100 caracteres")
+    @JsonProperty("nome")
     public String Nome;
 
-    @NotBlank(message = "Descricao não pode ser vazio")
     public String Descricao;
 
-    @Positive(message = "O curso deve ter no mínimo 1 hora de duração")
     public double Horas;
 
-    @Nullable
     public double Valor;
 
-    @Nullable
     public boolean PossuiCertificado;
 
-    @NotNull(message = "Status não pode ser indefinido")
     public StatusEnum Status;
 
-    @NotEmpty(message = "Categorias não pode ser vazio")
     public ArrayList<CategoriaEnum> Categorias;
 
-    @Min(value = 1, message = "o curso deve ter no mínimo 1 aula")
     public int NumeroDeAulas;
 
-    @NotNull(message = "o curso deve ter um autor definido")
-    public Autor Autor;
+    public int AutorId;
 
-    public LocalDateTime DataDePublicacao;
+    @JsonProperty("data")
+    public String DataDePublicacao;
 }
 

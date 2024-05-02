@@ -27,7 +27,7 @@ public class ConectorCloud {
 
     public static MongoCollection obterColecao(String nomeColecao, MongoClient conexao) {
         List<Document> databases = conexao.listDatabases().into(new ArrayList<>());
-        MongoDatabase database = conexao.getDatabase("NILL");
+        MongoDatabase database = conexao.getDatabase("Site_de_Cursos");
         MongoCollection<Document> collection = database.getCollection(nomeColecao);
         return collection;
     }

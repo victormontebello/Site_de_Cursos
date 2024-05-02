@@ -9,5 +9,6 @@ public class Main {
         Spark.port(8080);
         ApiRoutes.configurarRotas();
         Spark.init();
+        System.out.println("Servidor rodando na porta 8080");
     }
 }

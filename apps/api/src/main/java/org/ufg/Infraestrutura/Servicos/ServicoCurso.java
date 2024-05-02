@@ -12,7 +12,7 @@ public class ServicoCurso implements ICursoRepository {
     public ArrayList<Document> obterTodos() {
         var conexao = MongoClients.create(MONGODB_ATLAS_CONN);
         conexao.startSession();
-        var colecao = ConectorCloud.obterColecao("sample", conexao);
+        var colecao = ConectorCloud.obterColecao("cursos", conexao);
         ArrayList<Document> documentos = new ArrayList<>();
         try (MongoCursor<Document> cursor = colecao.find().iterator()) {
             while (cursor.hasNext()) {
@@ -25,13 +25,29 @@ public class ServicoCurso implements ICursoRepository {
     }
 
     @Override
-    public void Salvar() {
-
+    public void Salvar(Curso curso) {
+        var conexao = MongoClients.create(MONGODB_ATLAS_CONN);
+        conexao.startSession();
+        var colecao = ConectorCloud.obterColecao("cursos", conexao);
+        Document documento = new Document("nome", curso.getNome())
+                .append("descricao", curso.getDescricao())
+                .append("cargaHoraria", curso.getHoras());
+        colecao.insertOne(documento);
+        ConectorCloud.EncerrarConexao(conexao);
     }
 
     @Override
     public Curso obterPorId(String id) {
-        return null;
+        var conexao = MongoClients.create(MONGODB_ATLAS_CONN);
+        conexao.startSession();
+        var colecao = ConectorCloud.obterColecao("cursos", conexao);
+        Document documento = (Document) colecao.find(new Document("_id", id)).first();
+        Curso curso = new Curso();
+        curso.setNome(documento.getString("nome"));
+        curso.setDescricao(documento.getString("descricao"));
+        curso.setHoras(documento.getInteger("cargaHoraria"));
+        ConectorCloud.EncerrarConexao(conexao);
+        return curso;
     }
 
     @Override

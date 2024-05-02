@@ -6,5 +6,6 @@ import spark.Spark;
 public class ApiRoutes {
     public static void configurarRotas() {
         Spark.get("/cursos", CursosController.obterTodos);
+        Spark.post("/cursos", CursosController.salvar);
     }
 }
