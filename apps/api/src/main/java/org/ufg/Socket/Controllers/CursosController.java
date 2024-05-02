@@ -18,5 +18,10 @@ public class CursosController {
         _servicoCurso.Salvar(curso);
         return "Curso salvo com sucesso";
     };
+
+    public static Route obterPorId = (req, res) -> {
+        var id = req.params(":id");
+        return _servicoCurso.obterPorId(id);
+    };
 }
 

@@ -38,7 +38,16 @@ public class ServicoCurso implements ICursoRepository {
 
     @Override
     public Curso obterPorId(String id) {
-        return null;
+        var conexao = MongoClients.create(MONGODB_ATLAS_CONN);
+        conexao.startSession();
+        var colecao = ConectorCloud.obterColecao("cursos", conexao);
+        Document documento = (Document) colecao.find(new Document("_id", id)).first();
+        Curso curso = new Curso();
+        curso.setNome(documento.getString("nome"));
+        curso.setDescricao(documento.getString("descricao"));
+        curso.setHoras(documento.getInteger("cargaHoraria"));
+        ConectorCloud.EncerrarConexao(conexao);
+        return curso;
     }
 
     @Override
