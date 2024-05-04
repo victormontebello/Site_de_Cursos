@@ -2,13 +2,18 @@ package org.ufg.Infraestrutura.Servicos;
 import com.mongodb.client.*;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.ufg.Domain.Models.Curso;
 import org.ufg.Infraestrutura.Conectores.ConectorCloud;
 import org.ufg.Infraestrutura.Interfaces.ICursoRepository;
 import java.util.ArrayList;
 
+@EnableCaching
 public class ServicoCurso implements ICursoRepository {
     public final String MONGODB_ATLAS_CONN = System.getenv("MONGODB_ATLAS_CONN");
+
+    @Cacheable("cursos")
     @Override
     public ArrayList<Document> obterTodos() {
         var conexao = MongoClients.create(MONGODB_ATLAS_CONN);
@@ -45,6 +50,7 @@ public class ServicoCurso implements ICursoRepository {
         ConectorCloud.EncerrarConexao(conexao);
     }
 
+    @Cacheable("curso")
     @Override
     public Document obterPorId(String id) {
         var conexao = MongoClients.create(MONGODB_ATLAS_CONN);
