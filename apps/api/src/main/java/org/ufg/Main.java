@@ -6,9 +6,9 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        Spark.port(8080);
+        Spark.port(5002);
         ApiRoutes.configurarRotas();
         Spark.init();
-        System.out.println("Servidor rodando na porta 8080");
+        System.out.println("Servidor rodando na porta 5002");
     }
 }

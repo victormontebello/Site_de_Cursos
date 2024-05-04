@@ -32,7 +32,15 @@ public class ServicoCurso implements ICursoRepository {
         var colecao = ConectorCloud.obterColecao("cursos", conexao);
         Document documento = new Document("nome", curso.getNome())
                 .append("descricao", curso.getDescricao())
-                .append("cargaHoraria", curso.getHoras());
+                .append("cargaHoraria", curso.getHoras())
+                .append("valor", curso.getValor())
+                .append("possuiCertificado", curso.isPossuiCertificado())
+                .append("status", curso.getStatus().toString())
+                .append("categorias", curso.getCategorias())
+                .append("numeroDeAulas", curso.getNumeroDeAulas())
+                .append("autorId", curso.getAutorId())
+                .append("data", curso.getDataDePublicacao());
+
         colecao.insertOne(documento);
         ConectorCloud.EncerrarConexao(conexao);
     }
@@ -57,7 +65,15 @@ public class ServicoCurso implements ICursoRepository {
         var colecao = ConectorCloud.obterColecao("cursos", conexao);
         Document documento = new Document("nome", curso.getNome())
                 .append("descricao", curso.getDescricao())
-                .append("cargaHoraria", curso.getHoras());
+                .append("cargaHoraria", curso.getHoras())
+                .append("valor", curso.getValor())
+                .append("possuiCertificado", curso.isPossuiCertificado())
+                .append("status", curso.getStatus().toString())
+                .append("categorias", curso.getCategorias())
+                .append("numeroDeAulas", curso.getNumeroDeAulas())
+                .append("autorId", curso.getAutorId())
+                .append("data", curso.getDataDePublicacao());
+
         colecao.updateOne(new Document("_id", new ObjectId(curso.getId())), new Document("$set", documento));
         ConectorCloud.EncerrarConexao(conexao);
     }
