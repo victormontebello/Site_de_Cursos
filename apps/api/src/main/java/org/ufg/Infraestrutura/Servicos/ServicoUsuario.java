@@ -4,12 +4,15 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCursor;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.ufg.Domain.Models.Usuario;
 import org.ufg.Infraestrutura.Conectores.ConectorCloud;
 import org.ufg.Infraestrutura.Interfaces.IUsuarioRepository;
 
 import java.util.ArrayList;
 
+@EnableCaching
 public class ServicoUsuario implements IUsuarioRepository {
     public final String MONGODB_ATLAS_CONN = System.getenv("MONGODB_ATLAS_CONN");
 
@@ -73,6 +76,7 @@ public class ServicoUsuario implements IUsuarioRepository {
         ConectorCloud.EncerrarConexao(conexao);
     }
 
+    @Cacheable("usuario")
     @Override
     public Document obterPorId(String id) {
         var conexao = MongoClients.create(MONGODB_ATLAS_CONN);
@@ -86,6 +90,7 @@ public class ServicoUsuario implements IUsuarioRepository {
         return documento;
     }
 
+    @Cacheable("usuarios")
     @Override
     public ArrayList<Document> obterTodos() {
         var conexao = MongoClients.create(MONGODB_ATLAS_CONN);
