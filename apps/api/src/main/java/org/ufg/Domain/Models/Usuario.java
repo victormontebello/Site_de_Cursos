@@ -1,4 +1,5 @@
 package org.ufg.Domain.Models;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mongodb.lang.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,18 +18,16 @@ public class Usuario {
     @MongoId
     public String Id;
 
-    @NotBlank(message = "Nome não pode ser vazio")
-    @Size(min = 2, max = 50, message = "Nome deve ter no mínimo 2 e no máximo 50 caracteres")
+    @Nullable
     public String Nome;
 
-    @Email(message = "Email deve ser válido")
+    @Nullable
     public String Email;
 
-    @NotBlank(message = "Senha deve ser preenchida")
-    @Size(min = 6, message = "Senha deve ter no mínimo 6 caracteres")
+    @Nullable
     public String Senha;
 
-    @Pattern(regexp = "\\d{10,11}", message = "Telefone deve conter 10 ou 11 dígitos")
+    @Nullable
     public String Telefone;
 
     @Nullable
@@ -45,8 +44,6 @@ public class Usuario {
 
     @Nullable
     public String Foto;
-
-    public LocalDateTime DataDeCriacao;
 
     @Nullable
     public int NumeroDeCursos;
