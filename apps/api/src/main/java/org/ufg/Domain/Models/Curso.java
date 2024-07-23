@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 import org.ufg.Domain.Enums.CategoriaEnum;
 import org.ufg.Domain.Enums.StatusEnum;
@@ -19,7 +20,9 @@ import java.util.ArrayList;
 @NoArgsConstructor
 public class Curso {
 
-    public String Id;
+    @MongoId
+    @JsonProperty("_id")
+    public ObjectId Id;
 
     @JsonProperty("nome")
     public String Nome;

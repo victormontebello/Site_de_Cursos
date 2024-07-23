@@ -27,7 +27,6 @@ public class Main {
                 response.header("Access-Control-Allow-Origin", origin);
                 response.header("Access-Control-Request-Method", methods);
                 response.header("Access-Control-Allow-Headers", headers);
-                // For preflight requests
                 if (request.requestMethod().equalsIgnoreCase("OPTIONS")) {
                     response.status(200);
                 }

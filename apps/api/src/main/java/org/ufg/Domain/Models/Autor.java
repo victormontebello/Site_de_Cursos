@@ -1,9 +1,11 @@
 package org.ufg.Domain.Models;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mongodb.lang.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 import javax.validation.constraints.*;
 import java.util.Objects;
@@ -15,7 +17,8 @@ import java.util.Objects;
 public class Autor extends Usuario {
 
     @MongoId
-    public String Id;
+    @JsonProperty("_id")
+    public ObjectId Id;
 
     @NotBlank(message = "o nome não pode ser vazio")
     @Size(min = 2, max = 50, message = "o nome deve ter no mínimo 2 e no máximo 50 caracteres")

@@ -63,7 +63,7 @@ public class ServicoUsuario implements IUsuarioRepository {
                 .append("isInstructor", usuario.IsInstructor)
                 .append("isPremium", usuario.IsPremium);
 
-        colecao.updateOne(new Document("_id", new ObjectId(usuario.getId())), new Document("$set", documento));
+        colecao.updateOne(new Document("_id", new ObjectId(String.valueOf(usuario.getId()))), new Document("$set", documento));
         ConectorCloud.EncerrarConexao(conexao);
     }
 

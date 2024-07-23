@@ -1,16 +1,31 @@
 package org.ufg.Socket.Controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
+import com.google.gson.*;
+import org.bson.types.ObjectId;
 import org.ufg.Domain.Models.Curso;
 import org.ufg.Infraestrutura.Servicos.ServicoCurso;
 import spark.Route;
+
+import java.lang.reflect.Type;
 
 public class CursosController {
     private static ServicoCurso _servicoCurso = new ServicoCurso();
 
     public static Route obterTodos = (req, res) -> {
-        return _servicoCurso.obterTodos();
+        var cursos =  _servicoCurso.obterTodos();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(ObjectId.class, new JsonSerializer<ObjectId>() {
+                    @Override
+                    public JsonElement serialize(ObjectId src, Type typeOfSrc, JsonSerializationContext context) {
+                        return new JsonPrimitive(src.toHexString());
+                    }
+                })
+                .create();
+
+        String jsonResponse = gson.toJson(cursos);
+        res.type("application/json");
+        return jsonResponse;
     };
 
     public static Route salvar = (req, res) -> {
@@ -28,6 +43,17 @@ public class CursosController {
             res.status(404);
             return "{\"message\": \"Curso não encontrado\"}";
         }
+
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(ObjectId.class, new JsonSerializer<ObjectId>() {
+                    @Override
+                    public JsonElement serialize(ObjectId src, Type typeOfSrc, JsonSerializationContext context) {
+                        return new JsonPrimitive(src.toHexString());
+                    }
+                })
+                .create();
+
+        String jsonResponse = gson.toJson(curso);
         res.type("application/json");
         res.status(200);
         return curso.toJson();
@@ -37,7 +63,7 @@ public class CursosController {
         var id = req.params(":id");
         var json = req.body();
         var curso = new Gson().fromJson(json, Curso.class);
-        curso.setId(id);
+        curso.setId(new ObjectId(id));
         _servicoCurso.Atualizar(curso);
         return "Curso atualizado com sucesso";
     };

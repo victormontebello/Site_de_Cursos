@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 import javax.validation.constraints.*;
 import java.io.Serializable;
@@ -17,7 +18,8 @@ import java.time.LocalDateTime;
 public class Usuario implements Serializable {
 
     @MongoId
-    public String Id;
+    @JsonProperty("_id")
+    public ObjectId Id;
 
     @Nullable
     public String Nome;

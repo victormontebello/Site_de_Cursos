@@ -80,7 +80,7 @@ public class ServicoCurso implements ICursoRepository {
                 .append("autorId", curso.getAutorId())
                 .append("data", curso.getDataDePublicacao());
 
-        colecao.updateOne(new Document("_id", new ObjectId(curso.getId())), new Document("$set", documento));
+        colecao.updateOne(new Document("_id", new ObjectId(String.valueOf(curso.getId()))), new Document("$set", documento));
         ConectorCloud.EncerrarConexao(conexao);
     }
 

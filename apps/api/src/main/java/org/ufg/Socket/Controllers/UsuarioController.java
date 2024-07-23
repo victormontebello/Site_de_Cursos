@@ -1,15 +1,30 @@
 package org.ufg.Socket.Controllers;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.*;
+import org.bson.types.ObjectId;
 import org.ufg.Domain.Models.Usuario;
 import org.ufg.Infraestrutura.Servicos.ServicoUsuario;
 import spark.Route;
+
+import java.lang.reflect.Type;
 
 public class UsuarioController {
     public static ServicoUsuario _servicoUsuario = new ServicoUsuario();
 
     public static Route obterTodos = (req, res) -> {
-        return _servicoUsuario.obterTodos();
+        var usuarios =  _servicoUsuario.obterTodos();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(ObjectId.class, new JsonSerializer<ObjectId>() {
+                    @Override
+                    public JsonElement serialize(ObjectId src, Type typeOfSrc, JsonSerializationContext context) {
+                        return new JsonPrimitive(src.toHexString());
+                    }
+                })
+                .create();
+        String jsonResponse = gson.toJson(usuarios);
+        res.type("application/json");
+        return jsonResponse;
     };
 
     public static Route salvar = (req, res) -> {
@@ -27,16 +42,28 @@ public class UsuarioController {
             res.status(404);
             return "{\"message\": \"Usuário não encontrado\"}";
         }
+
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(ObjectId.class, new JsonSerializer<ObjectId>() {
+                    @Override
+                    public JsonElement serialize(ObjectId src, Type typeOfSrc, JsonSerializationContext context) {
+                        return new JsonPrimitive(src.toHexString());
+                    }
+                })
+                .create();
+
+        String jsonResponse = gson.toJson(usuario);
         res.type("application/json");
         res.status(200);
-        return usuario.toJson();
+
+        return jsonResponse;
     };
 
     public static Route atualizar = (req, res) -> {
         var id = req.params(":id");
         var json = req.body();
         var usuario = new Gson().fromJson(json, Usuario.class);
-        usuario.setId(id);
+        usuario.setId(new ObjectId(id));
         _servicoUsuario.Atualizar(usuario);
         return "Usuário atualizado com sucesso";
     };
