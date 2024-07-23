@@ -1,4 +1,5 @@
 package org.ufg;
+
 import org.ufg.Socket.Routes.ApiRoutes;
 import spark.Filter;
 import spark.Request;
@@ -8,13 +9,13 @@ import spark.Spark;
 import java.io.IOException;
 
 public class Main {
-    private static final String ANY_ORIGIN = "*";
+    private static final String ALLOWED_ORIGIN = "http://localhost:5173";
     private static final String ANY_METHOD = "GET, POST, PUT, DELETE, OPTIONS";
     private static final String ANY_HEADER = "Content-Type, Authorization, X-Requested-With, Content-Length, Accept, Origin";
 
     public static void main(String[] args) throws IOException {
         Spark.port(5002);
-        enableCORS(ANY_ORIGIN, ANY_METHOD, ANY_HEADER);
+        enableCORS(ALLOWED_ORIGIN, ANY_METHOD, ANY_HEADER);
         ApiRoutes.configurarRotas();
         Spark.init();
         System.out.println("Servidor rodando na porta 5002");
@@ -25,11 +26,13 @@ public class Main {
             @Override
             public void handle(Request request, Response response) throws Exception {
                 response.header("Access-Control-Allow-Origin", origin);
-                response.header("Access-Control-Request-Method", methods);
+                response.header("Access-Control-Allow-Methods", methods);
                 response.header("Access-Control-Allow-Headers", headers);
-                // For preflight requests
+                response.header("Access-Control-Allow-Credentials", "true");
+
                 if (request.requestMethod().equalsIgnoreCase("OPTIONS")) {
                     response.status(200);
+                    response.header("Access-Control-Max-Age", "86400");
                 }
             }
         };
