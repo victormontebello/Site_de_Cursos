@@ -1,8 +1,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { toast } from "sonner";
 
-import { Button } from "../../../components/ui/button.js";
+import { Button } from "../../components/ui/button.js";
 import {
   Form,
   FormControl,
@@ -11,24 +12,35 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../../../components/ui/form.js";
-import { Input } from "../../../components/ui/input.js";
-import { Switch } from "../../../components/ui/switch.js";
-import { useUserStore } from "../../../stores/user.js";
-import { toast } from "sonner";
-import api from "../../../services/api.js";
+} from "../../components/ui/form.js";
+import { Input } from "../../components/ui/input.js";
+import { Switch } from "../../components/ui/switch.js";
+import api from "../../services/api.js";
+import { useUser } from "@clerk/clerk-react";
+import { useNavigate } from "react-router-dom";
+import { User, useUserStore } from "../../stores/user.js";
 
 const profileFormSchema = z.object({
-  email: z
-    .string({
-      required_error: "Por favor, selecione um email para exibição.",
-    })
-    .email(),
-  telefone: z.string(),
-  endereco: z.string(),
-  cidade: z.string(),
-  estado: z.string(),
-  pais: z.string(),
+  email: z.string(),
+  nome: z
+    .string()
+    .min(3, { message: "O nome deve ter pelo menos 3 caracteres" }),
+  telefone: z
+    .string()
+    .min(3, { message: "O telefone deve ter pelo menos 3 caracteres" }),
+  endereco: z
+    .string()
+    .min(3, { message: "O endereço deve ter pelo menos 3 caracteres" }),
+  cidade: z
+    .string()
+    .min(3, { message: "A cidade deve ter pelo menos 3 caracteres" }),
+  estado: z
+    .string()
+    .min(2, { message: "O estado deve ter pelo menos 2 caracteres" }),
+  pais: z
+    .string()
+    .min(3, { message: "O país deve ter pelo menos 3 caracteres" }),
+  foto: z.string().optional().nullable(),
   isAdmin: z.boolean(),
   isInstructor: z.boolean(),
   isPremium: z.boolean(),
@@ -36,62 +48,86 @@ const profileFormSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
-export function AccountForm() {
-  const user = useUserStore((state) => state.user);
-  const updateUser = useUserStore((state) => state.updateUser);
+export function OnboardingForm() {
+  const allUsers = useUserStore((state) => state.allUsers) || [];
+  const setAllUsers = useUserStore((state) => state.setAllUsers);
 
-  const values: Partial<ProfileFormValues> = {
-    email: user?.email,
-    telefone: user?.telefone,
-    pais: user?.pais,
-    endereco: user?.endereco,
-    cidade: user?.cidade,
-    estado: user?.estado,
-    isAdmin: user?.isAdmin,
-    isInstructor: user?.isInstructor,
-    isPremium: user?.isPremium,
-  };
+  const navigate = useNavigate();
+  const { user } = useUser();
+
+  const userEmail = user?.emailAddresses[0].emailAddress;
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues: values,
     mode: "onChange",
+    defaultValues: {
+      cidade: undefined,
+      endereco: undefined,
+      estado: undefined,
+      foto: undefined,
+      nome: undefined,
+      pais: undefined,
+      telefone: undefined,
+      isInstructor: false,
+      email: userEmail || undefined,
+      isAdmin: false,
+      isPremium: false,
+    },
   });
 
-  async function onSubmit(data: ProfileFormValues) {
-    if (!user) return;
-
+  async function onSubmit(body: ProfileFormValues) {
     try {
-      const updatedUser = { ...user, ...data };
+      await api.post("/usuarios", {
+        ...body,
+      });
 
-      const body = Object.assign({}, updatedUser);
-      delete body._id;
+      const newAllUsers = [...allUsers, body as User];
 
-      await api.put(`/usuarios/66a2f36b3609232a718a52a6`, body);
+      setAllUsers(newAllUsers);
 
-      updateUser(updatedUser);
+      navigate("/home");
 
-      toast.success("Perfil atualizado com sucesso");
+      toast.success("Perfil criado com sucesso!");
     } catch (err) {
       console.error(err);
-      toast.error("Falha ao atualizar perfil");
+      toast.error("Falha ao criar perfil");
     }
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 flex-1">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-8 flex-1 w-full"
+      >
         <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Email de usuário</FormLabel>
               <FormDescription className="!mt-0 !mb-2">
                 Este é o seu email de exibição público como usuário.
               </FormDescription>
               <FormControl>
-                <Input placeholder="Email" {...field} disabled />
+                <Input placeholder="email" {...field} disabled />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="nome"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Nome de usuário</FormLabel>
+              <FormDescription className="!mt-0 !mb-2">
+                Este é o seu nome de exibição público como usuário.
+              </FormDescription>
+              <FormControl>
+                <Input placeholder="Nome" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -243,7 +279,7 @@ export function AccountForm() {
           )}
         />
 
-        <Button type="submit">Atualizar perfil</Button>
+        <Button type="submit">Criar perfil</Button>
       </form>
     </Form>
   );

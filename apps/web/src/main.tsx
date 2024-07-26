@@ -11,6 +11,7 @@ import NotFoundPage from "./pages/404";
 import AuthLayout from "./layouts/auth.layout";
 import SettingsPage from "./pages/settings";
 import CoursesPage from "./pages/courses";
+import OnboardingPage from "./pages/onboarding";
 
 const router = createBrowserRouter([
   {
@@ -18,9 +19,15 @@ const router = createBrowserRouter([
     children: [
       {
         element: <AuthLayout />,
+        path: "/onboarding",
+        children: [{ path: "/onboarding", element: <OnboardingPage /> }],
+      },
+      {
+        element: <AuthLayout />,
         path: "/home",
         children: [{ path: "/home", element: <HomePage /> }],
       },
+
       {
         element: <AuthLayout />,
         path: "/courses",
