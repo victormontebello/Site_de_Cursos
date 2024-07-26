@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.*;
 import org.bson.types.ObjectId;
 import org.ufg.Domain.Models.Curso;
+import org.ufg.Domain.Models.Usuario;
 import org.ufg.Infraestrutura.Servicos.ServicoCurso;
 import spark.Route;
 
@@ -30,7 +31,8 @@ public class CursosController {
 
     public static Route salvar = (req, res) -> {
         var json = req.body();
-        var curso = new Gson().fromJson(json, Curso.class);
+        var mapper = new ObjectMapper();
+        var curso = mapper.readValue(json, Curso.class);
         _servicoCurso.Salvar(curso);
         return "Curso salvo com sucesso";
     };
@@ -62,7 +64,8 @@ public class CursosController {
     public static Route atualizar = (req, res) -> {
         var id = req.params(":id");
         var json = req.body();
-        var curso = new Gson().fromJson(json, Curso.class);
+        var mapper = new ObjectMapper();
+        var curso = mapper.readValue(json, Curso.class);
         curso.setId(new ObjectId(id));
         _servicoCurso.Atualizar(curso);
         return "Curso atualizado com sucesso";

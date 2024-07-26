@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 public class Usuario implements Serializable {
 
     @MongoId
-    @JsonProperty("_id")
     public ObjectId Id;
 
     @Nullable

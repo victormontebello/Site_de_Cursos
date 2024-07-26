@@ -29,7 +29,8 @@ public class UsuarioController {
 
     public static Route salvar = (req, res) -> {
         var json = req.body();
-        var usuario = new Gson().fromJson(json, Usuario.class);
+        var mapper = new ObjectMapper();
+        var usuario = mapper.readValue(json, Usuario.class);
         _servicoUsuario.Salvar(usuario);
         return "Usuário salvo com sucesso";
     };
@@ -62,7 +63,8 @@ public class UsuarioController {
     public static Route atualizar = (req, res) -> {
         var id = req.params(":id");
         var json = req.body();
-        var usuario = new Gson().fromJson(json, Usuario.class);
+        var mapper = new ObjectMapper();
+        var usuario = mapper.readValue(json, Usuario.class);
         usuario.setId(new ObjectId(id));
         _servicoUsuario.Atualizar(usuario);
         return "Usuário atualizado com sucesso";
