@@ -35,60 +35,84 @@ public class CursosController {
     };
 
     public static Route salvar = (req, res) -> {
-        var json = req.body();
-        var mapper = new ObjectMapper();
-        SimpleModule module = new SimpleModule();
-        module.addDeserializer(StatusEnum.class, new StatusEnumDeserializer());
-        module.addDeserializer(CategoriaEnum.class, new CategoriaEnumDeserializer());
-        mapper.registerModule(module);
+        try {
+            var json = req.body();
+            var mapper = new ObjectMapper();
+            SimpleModule module = new SimpleModule();
+            module.addDeserializer(StatusEnum.class, new StatusEnumDeserializer());
+            module.addDeserializer(CategoriaEnum.class, new CategoriaEnumDeserializer());
+            mapper.registerModule(module);
 
-        var curso = mapper.readValue(json, Curso.class);
-        _servicoCurso.Salvar(curso);
-        return "Curso salvo com sucesso";
+            var curso = mapper.readValue(json, Curso.class);
+            _servicoCurso.Salvar(curso);
+            return "Curso salvo com sucesso";
+        } catch (Exception e) {
+            res.type("application/json");
+            res.status(500);
+            return "{\"message\": \"Erro ao salvar curso\"}";
+        }
     };
 
     public static Route obterPorId = (req, res) -> {
-        var id = req.params(":id");
-        var curso = _servicoCurso.obterPorId(id);
-        if (!curso.containsKey("_id")) {
+        try {
+            var id = req.params(":id");
+            var curso = _servicoCurso.obterPorId(id);
+            if (!curso.containsKey("_id")) {
+                res.type("application/json");
+                res.status(404);
+                return "{\"message\": \"Curso não encontrado\"}";
+            }
+
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(ObjectId.class, new JsonSerializer<ObjectId>() {
+                        @Override
+                        public JsonElement serialize(ObjectId src, Type typeOfSrc, JsonSerializationContext context) {
+                            return new JsonPrimitive(src.toHexString());
+                        }
+                    })
+                    .create();
+
+            String jsonResponse = gson.toJson(curso);
+            res.type("application/json");
+            res.status(200);
+            return curso.toJson();
+        } catch (Exception e) {
             res.type("application/json");
             res.status(404);
-            return "{\"message\": \"Curso não encontrado\"}";
+            return "{\"message\": \"Erro ao obter curso\"}";
         }
-
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(ObjectId.class, new JsonSerializer<ObjectId>() {
-                    @Override
-                    public JsonElement serialize(ObjectId src, Type typeOfSrc, JsonSerializationContext context) {
-                        return new JsonPrimitive(src.toHexString());
-                    }
-                })
-                .create();
-
-        String jsonResponse = gson.toJson(curso);
-        res.type("application/json");
-        res.status(200);
-        return curso.toJson();
     };
 
     public static Route atualizar = (req, res) -> {
-        var id = req.params(":id");
-        var json = req.body();
-        var mapper = new ObjectMapper();
-        SimpleModule module = new SimpleModule();
-        module.addDeserializer(StatusEnum.class, new StatusEnumDeserializer());
-        module.addDeserializer(CategoriaEnum.class, new CategoriaEnumDeserializer());
-        mapper.registerModule(module);
-        var curso = mapper.readValue(json, Curso.class);
-        curso.setId(new ObjectId(id));
-        _servicoCurso.Atualizar(curso);
-        return "Curso atualizado com sucesso";
+        try {
+            var id = req.params(":id");
+            var json = req.body();
+            var mapper = new ObjectMapper();
+            SimpleModule module = new SimpleModule();
+            module.addDeserializer(StatusEnum.class, new StatusEnumDeserializer());
+            module.addDeserializer(CategoriaEnum.class, new CategoriaEnumDeserializer());
+            mapper.registerModule(module);
+            var curso = mapper.readValue(json, Curso.class);
+            curso.setId(new ObjectId(id));
+            _servicoCurso.Atualizar(curso);
+            return "Curso atualizado com sucesso";
+        } catch (Exception e) {
+            res.type("application/json");
+            res.status(400);
+            return "{\"message\": \"Erro ao atualizar curso\"}";
+        }
     };
 
     public static Route deletar = (req, res) -> {
-        var id = req.params(":id");
-        _servicoCurso.Deletar(id);
-        return "Curso deletado com sucesso";
+        try {
+            var id = req.params(":id");
+            _servicoCurso.Deletar(id);
+            return "Curso deletado com sucesso";
+        } catch (Exception e) {
+            res.type("application/json");
+            res.status(404);
+            return "{\"message\": \"Erro ao deletar curso\"}";
+        }
     };
 }
 

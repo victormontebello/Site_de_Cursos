@@ -1,13 +1,14 @@
 package org.ufg.Infraestrutura.Interfaces;
 import org.bson.Document;
+import org.ufg.Domain.Exceptions.CursoNaoEncontradoException;
 import org.ufg.Domain.Models.Curso;
 
 import java.util.ArrayList;
 
 public interface ICursoRepository {
-    ArrayList<Document> obterTodos();
-    void Salvar(Curso curso);
-    Document obterPorId(String id);
-    void Atualizar(Curso curso);
-    void Deletar(String id);
+    ArrayList<Document> obterTodos() throws Exception;
+    void Salvar(Curso curso) throws Exception;
+    Document obterPorId(String id) throws CursoNaoEncontradoException;
+    void Atualizar(Curso curso) throws CursoNaoEncontradoException;
+    void Deletar(String id) throws CursoNaoEncontradoException;
 }
