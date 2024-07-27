@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.*;
 import org.bson.types.ObjectId;
 import org.ufg.Domain.Models.Usuario;
+import org.ufg.Infraestrutura.Servicos.ServicoCurso;
 import org.ufg.Infraestrutura.Servicos.ServicoUsuario;
 import spark.Route;
 
@@ -11,6 +12,7 @@ import java.lang.reflect.Type;
 
 public class UsuarioController {
     public static ServicoUsuario _servicoUsuario = new ServicoUsuario();
+    public static ServicoCurso _servicoCurso = new ServicoCurso();
 
     public static Route obterTodos = (req, res) -> {
         var usuarios =  _servicoUsuario.obterTodos();
@@ -74,5 +76,30 @@ public class UsuarioController {
         var id = req.params(":id");
         _servicoUsuario.Deletar(id);
         return "Usuário deletado com sucesso";
+    };
+
+    public static Route vincularCurso = (req, res) -> {
+        var id = req.params(":id");
+        var cursoId = req.params(":cursoId");
+
+        var usuarioDocument = _servicoUsuario.obterPorId(id);
+        if (!usuarioDocument.containsKey("_id")) {
+            res.type("application/json");
+            res.status(404);
+            return "{\"message\": \"Usuário não encontrado\"}";
+        }
+
+        var usuario = new Usuario();
+        usuario.setId(new ObjectId(id));
+
+        var curso = _servicoCurso.obterPorId(cursoId);
+        if (!curso.containsKey("_id")) {
+            res.type("application/json");
+            res.status(404);
+            return "{\"message\": \"Curso não encontrado\"}";
+        }
+
+        _servicoUsuario.VincularCurso(usuario, curso);
+        return "Usuário vinculado com sucesso ao curso";
     };
 }

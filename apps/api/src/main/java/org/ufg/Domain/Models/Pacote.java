@@ -8,7 +8,8 @@ import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
-import java.util.List;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 
 @Getter
 @Setter
@@ -20,7 +21,10 @@ public class Pacote extends Curso{
     @JsonProperty("_id")
     private ObjectId Id;
 
-    private List<Curso> Cursos;
+    @NotNull
+    @JsonProperty("cursos")
+    private ArrayList<Curso> Cursos;
+
     private double Desconto;
 
     public double ValorFinal(){

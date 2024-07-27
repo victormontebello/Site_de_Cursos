@@ -1,8 +1,13 @@
 package org.ufg.Socket.Controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.google.gson.*;
 import org.bson.types.ObjectId;
+import org.ufg.Domain.Enums.CategoriaEnum;
+import org.ufg.Domain.Enums.CategoriaEnumDeserializer;
+import org.ufg.Domain.Enums.StatusEnum;
+import org.ufg.Domain.Enums.StatusEnumDeserializer;
 import org.ufg.Domain.Models.Curso;
 import org.ufg.Domain.Models.Usuario;
 import org.ufg.Infraestrutura.Servicos.ServicoCurso;
@@ -32,6 +37,11 @@ public class CursosController {
     public static Route salvar = (req, res) -> {
         var json = req.body();
         var mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(StatusEnum.class, new StatusEnumDeserializer());
+        module.addDeserializer(CategoriaEnum.class, new CategoriaEnumDeserializer());
+        mapper.registerModule(module);
+
         var curso = mapper.readValue(json, Curso.class);
         _servicoCurso.Salvar(curso);
         return "Curso salvo com sucesso";
@@ -65,6 +75,10 @@ public class CursosController {
         var id = req.params(":id");
         var json = req.body();
         var mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(StatusEnum.class, new StatusEnumDeserializer());
+        module.addDeserializer(CategoriaEnum.class, new CategoriaEnumDeserializer());
+        mapper.registerModule(module);
         var curso = mapper.readValue(json, Curso.class);
         curso.setId(new ObjectId(id));
         _servicoCurso.Atualizar(curso);

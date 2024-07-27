@@ -16,5 +16,6 @@ public class ApiRoutes {
         Spark.get("/usuarios/:id", UsuarioController.obterPorId);
         Spark.put("/usuarios/:id", UsuarioController.atualizar);
         Spark.delete("/usuarios/:id", UsuarioController.deletar);
+        Spark.put("/usuarios/:id/comprar/:cursoId", UsuarioController.vincularCurso);
     }
 }

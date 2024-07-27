@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 @Getter
 @Setter
@@ -55,6 +56,10 @@ public class Usuario implements Serializable {
 
     @Nullable
     public double HorasCertificadas;
+
+    @Nullable
+    @JsonProperty("cursos")
+    public ArrayList<ObjectId> Cursos;
 
     public boolean IsAdmin;
     public boolean IsInstructor;

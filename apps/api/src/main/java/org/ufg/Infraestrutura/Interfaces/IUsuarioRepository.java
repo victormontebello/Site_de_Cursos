@@ -11,4 +11,5 @@ public interface IUsuarioRepository {
     void Deletar(String id);
     Document obterPorId(String id);
     ArrayList<Document> obterTodos();
+    void VincularCurso(Usuario usuario, Document curso);
 }

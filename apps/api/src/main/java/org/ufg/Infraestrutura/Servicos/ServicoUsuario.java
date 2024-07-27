@@ -2,6 +2,7 @@ package org.ufg.Infraestrutura.Servicos;
 
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCursor;
+import com.mongodb.client.model.Updates;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.cache.annotation.Cacheable;
@@ -31,6 +32,7 @@ public class ServicoUsuario implements IUsuarioRepository {
                 .append("pais", usuario.getPais())
                 .append("foto", usuario.getFoto())
                 .append("numeroDeCursos", usuario.getNumeroDeCursos())
+                .append("cursos", usuario.getCursos())
                 .append("horasAssistidas", usuario.getHorasAssistidas())
                 .append("horasCertificadas", usuario.getHorasCertificadas())
                 .append("isAdmin", usuario.IsAdmin)
@@ -56,6 +58,7 @@ public class ServicoUsuario implements IUsuarioRepository {
                 .append("estado", usuario.getEstado())
                 .append("pais", usuario.getPais())
                 .append("foto", usuario.getFoto())
+                .append("cursos", usuario.getCursos())
                 .append("numeroDeCursos", usuario.getNumeroDeCursos())
                 .append("horasAssistidas", usuario.getHorasAssistidas())
                 .append("horasCertificadas", usuario.getHorasCertificadas())
@@ -105,5 +108,14 @@ public class ServicoUsuario implements IUsuarioRepository {
 
         ConectorCloud.EncerrarConexao(conexao);
         return documentos;
+    }
+
+    @Override
+    public void VincularCurso(Usuario usuario, Document curso) {
+        var conexao = MongoClients.create(MONGODB_ATLAS_CONN);
+        conexao.startSession();
+        var colecao = ConectorCloud.obterColecao("usuarios", conexao);
+        colecao.updateOne(new Document("_id", new ObjectId(String.valueOf(usuario.getId()))), Updates.push("cursos", curso.get("_id").toString()));
+        ConectorCloud.EncerrarConexao(conexao);
     }
 }
