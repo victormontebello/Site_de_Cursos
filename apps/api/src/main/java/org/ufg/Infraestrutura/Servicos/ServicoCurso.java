@@ -48,7 +48,7 @@ public class ServicoCurso implements ICursoRepository {
                     .append("cargaHoraria", curso.getHoras())
                     .append("valor", curso.getValor())
                     .append("possuiCertificado", curso.isPossuiCertificado())
-                    .append("status", curso.getStatus().toString())
+                    .append("status", curso.getStatus())
                     .append("categorias", curso.getCategorias())
                     .append("numeroDeAulas", curso.getNumeroDeAulas())
                     .append("autorId", curso.getAutorId())

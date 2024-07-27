@@ -58,7 +58,7 @@ public class Curso {
     public int NumeroDeAulas;
 
     @Nullable
-    public int AutorId;
+    public ObjectId AutorId;
 
     @Nullable
     @JsonProperty("data")
