@@ -3,6 +3,7 @@ import { ClerkProvider } from "@clerk/clerk-react";
 import { localization } from "../data/localization";
 import { TooltipProvider } from "../components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { Toaster } from "sonner";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -22,6 +23,7 @@ export default function RootLayout() {
       publishableKey={PUBLISHABLE_KEY}
       localization={localization}
     >
+      <Toaster richColors />
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <main className="font-sans">

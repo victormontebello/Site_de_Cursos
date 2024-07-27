@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { Progress } from "../ui/progress";
 
 const PHRASES = [
-  "Recebendo pedidos...",
-  "Preparando histórico...",
-  "Conectando aos clientes...",
+  "Carregando cursos...",
+  "Recebendo dados de usuário...",
+  "Consolidando dados...",
 ];
 
 export default function InitialLoadingScreen() {
