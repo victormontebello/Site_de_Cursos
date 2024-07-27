@@ -23,7 +23,7 @@ export default function RootLayout() {
       publishableKey={PUBLISHABLE_KEY}
       localization={localization}
     >
-      <Toaster richColors />
+      <Toaster richColors position="bottom-center" />
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <main className="font-sans">

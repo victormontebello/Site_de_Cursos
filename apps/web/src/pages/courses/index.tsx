@@ -7,10 +7,6 @@ export default function CoursesPage() {
       <div className="w-full min-h-40 bg-white flex-1 h-full flex flex-col items-center justify-start gap-6">
         <div className="w-full flex items-center justify-between">
           <h1 className="text-gray-950 font-semibold text-2xl">Meus cursos</h1>
-          <Button>
-            <p>Criar novo curso</p>
-            <IconPlus />
-          </Button>
         </div>
         <div className="grid grid-cols-6 flex-wrap gap-6">
           {Array.from({ length: 12 }).map((course) => (

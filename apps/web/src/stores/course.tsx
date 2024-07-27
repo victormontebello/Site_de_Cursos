@@ -8,6 +8,10 @@ export type Course = {
   nome: string;
   descricao: string;
   cargaHoraria: number;
+  numeroDeAulas: 7;
+  possuiCertificado: boolean;
+  valor: number;
+  isPremium: boolean;
 };
 
 type CourseStore = {
@@ -16,9 +20,9 @@ type CourseStore = {
 
   setIsLoadingCourses: (isLoadingCourses: boolean) => void;
   setCourses: (courses: Course[]) => void;
-  createCourse: (course: Omit<Course, "_id">) => Promise<void>;
-  updateCourse: (course: Course) => Promise<void>;
-  deleteCourse: (id: string) => Promise<void>;
+  createCourse: (course: Course) => void;
+  updateCourse: (course: Course) => void;
+  deleteCourse: (id: string) => void;
 };
 
 export const useCourseStore = create<CourseStore>((set, get) => ({
@@ -40,23 +44,28 @@ export const useCourseStore = create<CourseStore>((set, get) => ({
   },
 
   createCourse: async (course) => {
-    const { data } = await api.post("/cursos", course);
     set((oldState: CourseStore) => ({
       ...oldState,
-      courses: [...(oldState.courses || []), data],
+      courses: [...(oldState.courses || []), course],
     }));
   },
 
   updateCourse: async (course) => {
-    const { data } = await api.put(`/cursos/${course._id}`, course);
     set((oldState: CourseStore) => ({
       ...oldState,
-      courses: oldState.courses?.map((c) => (c._id === course._id ? data : c)),
+      courses: oldState.courses
+        ? oldState.courses.map((c) => {
+            if (c._id === course._id) {
+              return course;
+            }
+
+            return c;
+          })
+        : [],
     }));
   },
 
   deleteCourse: async (id) => {
-    await api.delete(`/cursos/${id}`);
     set((oldState: CourseStore) => ({
       ...oldState,
       courses: oldState.courses?.filter((course) => course._id !== id),
