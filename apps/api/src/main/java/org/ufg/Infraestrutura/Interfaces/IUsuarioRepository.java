@@ -14,4 +14,5 @@ public interface IUsuarioRepository {
     Document obterPorId(String id) throws UsuarioNaoEncontradoException;
     ArrayList<Document> obterTodos() throws Exception;
     void VincularCurso(Usuario usuario, Document curso) throws MongoClientException;
+    void CancelarCurso(Usuario usuario, Document curso) throws MongoClientException;
 }

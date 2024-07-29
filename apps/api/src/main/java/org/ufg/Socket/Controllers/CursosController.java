@@ -19,7 +19,9 @@ public class CursosController {
     private static ServicoCurso _servicoCurso = new ServicoCurso();
 
     public static Route obterTodos = (req, res) -> {
-        var cursos =  _servicoCurso.obterTodos();
+        var params = req.queryParams("usuarioId");
+
+        var cursos =  _servicoCurso.obterTodos(params);
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(ObjectId.class, new JsonSerializer<ObjectId>() {
                     @Override

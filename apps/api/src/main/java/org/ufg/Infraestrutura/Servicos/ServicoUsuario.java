@@ -35,7 +35,7 @@ public class ServicoUsuario implements IUsuarioRepository {
                     .append("pais", usuario.getPais())
                     .append("foto", usuario.getFoto())
                     .append("numeroDeCursos", usuario.getNumeroDeCursos())
-                    .append("cursos", usuario.getCursos())
+                    .append("cursos", new ArrayList<>())
                     .append("horasAssistidas", usuario.getHorasAssistidas())
                     .append("horasCertificadas", usuario.getHorasCertificadas())
                     .append("isAdmin", usuario.IsAdmin)
@@ -140,10 +140,35 @@ public class ServicoUsuario implements IUsuarioRepository {
             var conexao = MongoClients.create(MONGODB_ATLAS_CONN);
             conexao.startSession();
             var colecao = ConectorCloud.obterColecao("usuarios", conexao);
-            colecao.updateOne(new Document("_id", new ObjectId(String.valueOf(usuario.getId()))), Updates.push("cursos", curso.get("_id").toString()));
+
+            var updateOperation = Updates.combine(
+                    Updates.push("cursos", curso.get("_id").toString()),
+                    Updates.inc("numeroDeCursos", 1)
+            );
+
+            colecao.updateOne(new Document("_id", new ObjectId(String.valueOf(usuario.getId()))), updateOperation);
             ConectorCloud.EncerrarConexao(conexao);
         } catch (Exception e) {
             throw new MongoClientException("Erro ao vincular curso ao usuario", e);
+        }
+    }
+
+    @Override
+    public void CancelarCurso(Usuario usuario, Document curso) throws MongoClientException {
+        try {
+            var conexao = MongoClients.create(MONGODB_ATLAS_CONN);
+            conexao.startSession();
+            var colecao = ConectorCloud.obterColecao("usuarios", conexao);
+
+            var updateOperation = Updates.combine(
+                    Updates.pull("cursos", curso.get("_id").toString()),
+                    Updates.inc("numeroDeCursos", -1)
+            );
+
+            colecao.updateOne(new Document("_id", new ObjectId(String.valueOf(usuario.getId()))), updateOperation);
+            ConectorCloud.EncerrarConexao(conexao);
+        } catch (Exception e) {
+            throw new MongoClientException("Erro ao cancelar curso ao usuario", e);
         }
     }
 }

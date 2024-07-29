@@ -1,5 +1,6 @@
 package org.ufg.Infraestrutura.Servicos;
 import com.mongodb.client.*;
+import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.cache.annotation.Cacheable;
@@ -18,9 +19,14 @@ public class ServicoCurso implements ICursoRepository {
 
     @Cacheable("cursos")
     @Override
-    public ArrayList<Document> obterTodos() throws Exception {
+    public ArrayList<Document> obterTodos(String usuarioId) throws Exception {
         try {
             var conexao = MongoClients.create(MONGODB_ATLAS_CONN);
+            if (usuarioId != null) {
+                var documentos = obterCursosDoUsuario(usuarioId);
+                ConectorCloud.EncerrarConexao(conexao);
+                return documentos;
+            }
             conexao.startSession();
             var colecao = ConectorCloud.obterColecao("cursos", conexao);
             ArrayList<Document> documentos = new ArrayList<>();
@@ -101,6 +107,28 @@ public class ServicoCurso implements ICursoRepository {
         }
         catch (Exception e) {
             throw new CursoNaoEncontradoException("Erro ao atualizar curso");
+        }
+    }
+
+    @Override
+    public ArrayList<Document> obterCursosDoUsuario(String usuarioId) throws Exception {
+        try {
+            var conexao = MongoClients.create(MONGODB_ATLAS_CONN);
+            conexao.startSession();
+            var colecao = ConectorCloud.obterColecao("usuarios", conexao);
+            var colecaoDeCursos = ConectorCloud.obterColecao("cursos", conexao);
+            var usuario = (Document)colecao.find(new Document("_id", new ObjectId(usuarioId))).first();
+            var cursosIds = (ArrayList<String>) usuario.get("cursos");
+            var cursosDoUsuario = new ArrayList<Document>();
+
+            for (String id : cursosIds) {
+                cursosDoUsuario.add((Document) colecaoDeCursos.find(new Document("_id", new ObjectId(id))).first());
+            }
+
+            ConectorCloud.EncerrarConexao(conexao);
+            return cursosDoUsuario;
+        } catch (Exception e) {
+            throw new Exception("Erro ao obter cursos do usuario " + e.getMessage(), e);
         }
     }
 

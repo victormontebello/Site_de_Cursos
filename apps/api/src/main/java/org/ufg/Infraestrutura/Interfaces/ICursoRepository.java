@@ -6,9 +6,10 @@ import org.ufg.Domain.Models.Curso;
 import java.util.ArrayList;
 
 public interface ICursoRepository {
-    ArrayList<Document> obterTodos() throws Exception;
+    ArrayList<Document> obterTodos(String usuarioId) throws Exception;
     void Salvar(Curso curso) throws Exception;
     Document obterPorId(String id) throws CursoNaoEncontradoException;
     void Atualizar(Curso curso) throws CursoNaoEncontradoException;
     void Deletar(String id) throws CursoNaoEncontradoException;
+    ArrayList<Document> obterCursosDoUsuario(String usuarioId) throws Exception;
 }

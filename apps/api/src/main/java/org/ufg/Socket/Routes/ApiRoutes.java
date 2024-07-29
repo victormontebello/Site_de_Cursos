@@ -17,5 +17,6 @@ public class ApiRoutes {
         Spark.put("/usuarios/:id", UsuarioController.atualizar);
         Spark.delete("/usuarios/:id", UsuarioController.deletar);
         Spark.put("/usuarios/:id/comprar/:cursoId", UsuarioController.vincularCurso);
+        Spark.put("/usuarios/:id/cancelar/:cursoId", UsuarioController.cancelarCurso);
     }
 }

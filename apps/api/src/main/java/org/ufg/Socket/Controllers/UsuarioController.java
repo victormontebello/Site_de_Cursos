@@ -132,4 +132,35 @@ public class UsuarioController {
             return "{\"message\": \"Erro ao vincular curso ao usuario\"}" + e.getMessage();
         }
     };
+
+    public static Route cancelarCurso = (req, res) -> {
+        try {
+            var id = req.params(":id");
+            var cursoId = req.params(":cursoId");
+
+            var usuarioDocument = _servicoUsuario.obterPorId(id);
+            if (!usuarioDocument.containsKey("_id")) {
+                res.type("application/json");
+                res.status(404);
+                return "{\"message\": \"Usuário não encontrado\"}" ;
+            }
+
+            var usuario = new Usuario();
+            usuario.setId(new ObjectId(id));
+
+            var curso = _servicoCurso.obterPorId(cursoId);
+            if (!curso.containsKey("_id")) {
+                res.type("application/json");
+                res.status(404);
+                return "{\"message\": \"Curso não encontrado\"}";
+            }
+
+            _servicoUsuario.CancelarCurso(usuario, curso);
+            return "Usuário vinculado com sucesso ao curso";
+        } catch (Exception e) {
+            res.type("application/json");
+            res.status(400);
+            return "{\"message\": \"Erro ao cancelar curso ao usuario\"}" + e.getMessage();
+        }
+    };
 }
