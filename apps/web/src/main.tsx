@@ -12,6 +12,7 @@ import AuthLayout from "./layouts/auth.layout";
 import SettingsPage from "./pages/settings";
 import CoursesPage from "./pages/courses";
 import OnboardingPage from "./pages/onboarding";
+import UsersPage from "./pages/users/page";
 
 const router = createBrowserRouter([
   {
@@ -32,6 +33,11 @@ const router = createBrowserRouter([
         element: <AuthLayout />,
         path: "/courses",
         children: [{ path: "/courses", element: <CoursesPage /> }],
+      },
+      {
+        element: <AuthLayout />,
+        path: "users",
+        children: [{ path: "/users", element: <UsersPage /> }],
       },
       {
         element: <AuthLayout />,

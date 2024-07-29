@@ -23,38 +23,69 @@ import {
   FormMessage,
 } from "../../../components/ui/form";
 import { IconPlus } from "@tabler/icons-react";
+import { toast } from "sonner";
+import { Course, useCourseStore } from "../../../stores/course";
+import { Switch } from "../../ui/switch";
+import { useState } from "react";
+import { useUserStore } from "../../../stores/user";
+import api from "../../../services/api";
 
 const createCourseSchema = z.object({
   nome: z.string().min(1, "Nome é obrigatório"),
   descricao: z.string().min(1, "Descrição é obrigatória"),
-  cargaHoraria: z
+  horas: z
     .number()
     .min(1, "Carga horária deve ser maior que zero")
     .positive("Carga horária deve ser um número positivo"),
+  valor: z
+    .number()
+    .min(1, "Valor deve ser maior que zero")
+    .positive("Valor deve ser um número positivo"),
+  numeroDeAulas: z
+    .number()
+    .min(1, "Numero de aulas deve ser maior que zero")
+    .positive("Numero de aulas deve ser um número positivo"),
+  possuiCertificado: z.boolean(),
 });
 
 type CreateCourseFormValues = z.infer<typeof createCourseSchema>;
 
 export default function CreateCourseDialog() {
+  const [open, setOpen] = useState(false);
+
+  const createCourse = useCourseStore((state) => state.createCourse);
+  const user = useUserStore((state) => state.user);
+
   const form = useForm<CreateCourseFormValues>({
     resolver: zodResolver(createCourseSchema),
     defaultValues: {
       nome: "",
       descricao: "",
-      cargaHoraria: 0,
+      horas: 1,
+      numeroDeAulas: 1,
+      possuiCertificado: true,
+      valor: 1,
     },
     mode: "onChange",
   });
 
-  const onSubmit = (data: CreateCourseFormValues) => {
-    console.log("Curso criado:", data);
-    form.reset();
+  const onSubmit = async (data: CreateCourseFormValues) => {
+    try {
+      await api.post("/cursos", data);
+
+      createCourse(data as unknown as Course);
+      toast.success("Curso criado com sucesso!");
+
+      setOpen(false);
+    } catch (err) {
+      toast.error("Falha ao criar novo curso!");
+    }
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
+        <Button disabled={!user?.isInstructor}>
           <p>Criar novo curso</p>
           <IconPlus />
         </Button>
@@ -67,7 +98,7 @@ export default function CreateCourseDialog() {
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
               name="nome"
@@ -106,7 +137,7 @@ export default function CreateCourseDialog() {
             />
             <FormField
               control={form.control}
-              name="cargaHoraria"
+              name="horas"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Carga Horária</FormLabel>
@@ -120,6 +151,48 @@ export default function CreateCourseDialog() {
                       {...field}
                       onChange={(e) => field.onChange(Number(e.target.value))}
                     />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="valor"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Carga Horária</FormLabel>
+                  <FormDescription className="!mt-0 !mb-2">
+                    Carga horária do curso em horas
+                  </FormDescription>
+                  <FormControl>
+                    <Input
+                      type="valor"
+                      placeholder="Valor"
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="possuiCertificado"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Possui Certificado</FormLabel>
+                  <FormDescription className="!mt-0 !mb-2">
+                    Este curso oferece certificado?
+                  </FormDescription>
+                  <FormControl>
+                    <label className="flex items-center">
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </label>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

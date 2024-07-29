@@ -1,5 +1,5 @@
 import { useCourseStore } from "../../stores/course";
-import CourseCard from "../../components/global/Course/card.couse.dialog";
+import CourseCard from "../../components/global/Course/card.course.dialog";
 import CreateCourseDialog from "../../components/global/Course/create.course.dialog";
 
 export default function HomePage() {
@@ -7,7 +7,7 @@ export default function HomePage() {
 
   return (
     <div className="w-full flex-1 min-h-screen flex items-center justify-center p-6 h-full">
-      <div className="w-full min-h-40 bg-white flex-1 h-full flex flex-col items-center justify-start gap-6">
+      <div className="w-full min-h-40 bg-white flex-1 h-full flex flex-col items-center justify-start gap-12">
         <div className="w-full flex items-center justify-between">
           <h1 className="text-gray-950 font-semibold text-2xl">
             Cursos disponíveis
