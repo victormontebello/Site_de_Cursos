@@ -79,11 +79,11 @@ export function OnboardingForm() {
 
   async function onSubmit(body: ProfileFormValues) {
     try {
-      const { data } = await api.post("/usuarios", {
+      await api.post("/usuarios", {
         ...body,
       });
 
-      const newAllUsers = [...allUsers, data as User];
+      const newAllUsers = [...allUsers, body as User];
 
       setAllUsers(newAllUsers);
 

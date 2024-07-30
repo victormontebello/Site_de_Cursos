@@ -103,8 +103,6 @@ export const useCourseStore = create<CourseStore>((set, get) => ({
 }));
 
 export const useCourseSubscription = () => {
-  const user = useUserStore((state) => state.user);
-
   const setCourses = useCourseStore((state) => state.setCourses);
   const setUserCourses = useCourseStore((state) => state.setUserCourses);
   const setIsLoadingCourses = useCourseStore(
@@ -126,35 +124,10 @@ export const useCourseSubscription = () => {
     }
   );
 
-  const { data: userCursosData } = useQuery(
-    ["user_courses"],
-    async () => {
-      if (!user?._id) return;
-
-      const { data } = await api.get(`/cursos?usuarioId=${user._id}`, {
-        params: { showDisabled: false },
-      });
-
-      return data;
-    },
-    {
-      enabled: !!user,
-      refetchOnWindowFocus: false,
-      refetchOnMount: false,
-    }
-  );
-
   useEffect(() => {
-    if (!cursosData || !userCursosData) return;
+    if (!cursosData) return;
 
     setIsLoadingCourses(false);
     setCourses(cursosData);
-    setUserCourses(userCursosData);
-  }, [
-    cursosData,
-    setCourses,
-    setIsLoadingCourses,
-    setUserCourses,
-    userCursosData,
-  ]);
+  }, [cursosData, setCourses, setIsLoadingCourses, setUserCourses]);
 };
