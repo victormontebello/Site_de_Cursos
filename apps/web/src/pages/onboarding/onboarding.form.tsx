@@ -44,6 +44,7 @@ const profileFormSchema = z.object({
   isAdmin: z.boolean(),
   isInstructor: z.boolean(),
   isPremium: z.boolean(),
+  cursos: z.array(z.string()),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -72,16 +73,17 @@ export function OnboardingForm() {
       email: userEmail || undefined,
       isAdmin: false,
       isPremium: false,
+      cursos: [],
     },
   });
 
   async function onSubmit(body: ProfileFormValues) {
     try {
-      await api.post("/usuarios", {
+      const { data } = await api.post("/usuarios", {
         ...body,
       });
 
-      const newAllUsers = [...allUsers, body as User];
+      const newAllUsers = [...allUsers, data as User];
 
       setAllUsers(newAllUsers);
 
