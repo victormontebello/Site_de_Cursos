@@ -1,5 +1,5 @@
 import { IconStarFilled } from "@tabler/icons-react";
-import { Course } from "../../../stores/course.js";
+import { Course, useCourseStore } from "../../../stores/course.js";
 import { Button } from "../../ui/button.js";
 import {
   Dialog,
@@ -14,13 +14,22 @@ import {
 import { toast } from "sonner";
 import { useUserStore } from "../../../stores/user.js";
 import api from "../../../services/api.js";
+import { useState } from "react";
 
 type CourseCardProps = {
   course: Course;
 };
 
 export default function CourseCard({ course }: CourseCardProps) {
+  const [open, setOpen] = useState(false);
+
   const user = useUserStore((state) => state.user);
+  const userCourses = useCourseStore((state) => state.userCourses);
+
+  const createUserCourse = useCourseStore((state) => state.createUserCourse);
+
+  const deleteUserCourse = useCourseStore((state) => state.deleteUserCourse);
+  const deleteCourse = useCourseStore((state) => state.deleteCourse);
 
   const handleAddCourse = async () => {
     if (!user?._id || !course._id) {
@@ -30,17 +39,61 @@ export default function CourseCard({ course }: CourseCardProps) {
     try {
       await api.put(`/usuarios/${user._id}/comprar/${course._id}`);
 
+      createUserCourse(course);
+
       toast.success("Curso adicionado com sucesso!");
+
+      setOpen(false);
     } catch (err) {
       console.error(err);
       toast.error("Falha ao adicionar curso!");
     }
   };
 
+  const handleRemoveCourse = async () => {
+    if (!user?._id || !course._id) {
+      return toast.error("Por favor recarregue a página");
+    }
+
+    try {
+      await api.put(`/usuarios/${user._id}/cancelar/${course._id}`);
+
+      deleteUserCourse(course._id);
+
+      toast.success("Curso removido com sucesso!");
+
+      setOpen(false);
+    } catch (err) {
+      console.error(err);
+      toast.error("Falha ao remover curso!");
+    }
+  };
+
+  const handleDeleteCourse = async () => {
+    try {
+      await api.delete(`/cursos/${course._id}`);
+
+      deleteCourse(course._id);
+      deleteUserCourse(course._id);
+
+      toast.success("Curso deletado com sucesso!");
+    } catch (err) {
+      console.error(err);
+      toast.success("Falha ao deletar curso!");
+    }
+  };
+
   const isCourseDisabledToAdd = course.isPremium && !user?.isPremium;
+  const isCourseAlredyOnUserCourses = userCourses.some(
+    (uC) => uC._id === course._id
+  );
+  const isTheCreatorOfTheCourse = course.autorId === user?._id;
+
+  console.log("course", course.nome, course._id);
+  console.log("user", user?._id);
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <div className="p-4 border rounded-md flex min-h-[200px] flex-col items-start justify-between gap-4">
           <div className="flex items-center justify-center gap-2">
@@ -93,13 +146,27 @@ export default function CourseCard({ course }: CourseCardProps) {
             <span className="text-sm">{course.numeroDeAulas}</span>
           </div>
         </div>
-        <DialogFooter>
+        <DialogFooter className="w-full">
+          {isTheCreatorOfTheCourse ? (
+            <div className="w-full">
+              <Button onClick={handleDeleteCourse}>Excluir</Button>
+            </div>
+          ) : null}
           <DialogClose>
             <Button>Fechar</Button>
           </DialogClose>
-          <Button disabled={isCourseDisabledToAdd} onClick={handleAddCourse}>
-            Adicionar
-          </Button>
+          {isCourseAlredyOnUserCourses ? (
+            <Button
+              disabled={isCourseDisabledToAdd}
+              onClick={handleRemoveCourse}
+            >
+              Remover
+            </Button>
+          ) : (
+            <Button disabled={isCourseDisabledToAdd} onClick={handleAddCourse}>
+              Adicionar
+            </Button>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

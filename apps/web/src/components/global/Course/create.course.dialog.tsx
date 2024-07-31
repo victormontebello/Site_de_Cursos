@@ -46,6 +46,7 @@ const createCourseSchema = z.object({
     .min(1, "Numero de aulas deve ser maior que zero")
     .positive("Numero de aulas deve ser um número positivo"),
   possuiCertificado: z.boolean(),
+  autorId: z.string(),
 });
 
 type CreateCourseFormValues = z.infer<typeof createCourseSchema>;
@@ -65,6 +66,7 @@ export default function CreateCourseDialog() {
       numeroDeAulas: 1,
       possuiCertificado: true,
       valor: 1,
+      autorId: user?._id || "",
     },
     mode: "onChange",
   });

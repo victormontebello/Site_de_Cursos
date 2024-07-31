@@ -19,6 +19,7 @@ export type User = {
   isAdmin: boolean;
   isInstructor: boolean;
   isPremium: boolean;
+  cursos: string[];
 };
 
 type UserStore = {

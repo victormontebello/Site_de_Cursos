@@ -4,6 +4,7 @@ import CreateCourseDialog from "../../components/global/Course/create.course.dia
 
 export default function HomePage() {
   const courses = useCourseStore((state) => state.courses);
+  const userCourses = useCourseStore((state) => state.userCourses);
 
   return (
     <div className="w-full flex-1 min-h-screen flex items-center justify-center p-6 h-full">
@@ -15,9 +16,19 @@ export default function HomePage() {
           <CreateCourseDialog />
         </div>
         <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
-          {courses?.map((course, index) => (
-            <CourseCard course={course} key={index} />
-          ))}
+          {courses.length > 0 ? (
+            courses.map((course, index) => {
+              const isCourseAlredyOnUserCourses = userCourses.some(
+                (uC) => uC._id === course._id
+              );
+
+              if (isCourseAlredyOnUserCourses) return null;
+
+              return <CourseCard course={course} key={index} />;
+            })
+          ) : (
+            <p className="w-full col-span-2">Não há nenhum curso disponível</p>
+          )}
         </div>
       </div>
     </div>

@@ -44,6 +44,7 @@ const profileFormSchema = z.object({
   isAdmin: z.boolean(),
   isInstructor: z.boolean(),
   isPremium: z.boolean(),
+  cursos: z.array(z.string()),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
@@ -72,6 +73,7 @@ export function OnboardingForm() {
       email: userEmail || undefined,
       isAdmin: false,
       isPremium: false,
+      cursos: [],
     },
   });
 

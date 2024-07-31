@@ -2,6 +2,7 @@ import { create } from "zustand";
 import api from "../services/api.js";
 import { useQuery } from "react-query";
 import { useEffect } from "react";
+import { useUserStore } from "./user.js";
 
 export type Course = {
   _id: string;
@@ -12,10 +13,12 @@ export type Course = {
   possuiCertificado: boolean;
   valor: number;
   isPremium: boolean;
+  autorId: string;
 };
 
 type CourseStore = {
-  courses: Course[] | undefined;
+  courses: Course[];
+  userCourses: Course[];
   isLoadingCourses: boolean;
 
   setIsLoadingCourses: (isLoadingCourses: boolean) => void;
@@ -23,10 +26,15 @@ type CourseStore = {
   createCourse: (course: Course) => void;
   updateCourse: (course: Course) => void;
   deleteCourse: (id: string) => void;
+
+  setUserCourses: (courses: Course[]) => void;
+  createUserCourse: (course: Course) => void;
+  deleteUserCourse: (id: string) => void;
 };
 
 export const useCourseStore = create<CourseStore>((set, get) => ({
-  courses: undefined,
+  courses: [],
+  userCourses: [],
   isLoadingCourses: true,
 
   setIsLoadingCourses: (isLoadingCourses) => {
@@ -43,14 +51,14 @@ export const useCourseStore = create<CourseStore>((set, get) => ({
     }));
   },
 
-  createCourse: async (course) => {
+  createCourse: (course) => {
     set((oldState: CourseStore) => ({
       ...oldState,
       courses: [...(oldState.courses || []), course],
     }));
   },
 
-  updateCourse: async (course) => {
+  updateCourse: (course) => {
     set((oldState: CourseStore) => ({
       ...oldState,
       courses: oldState.courses
@@ -65,21 +73,43 @@ export const useCourseStore = create<CourseStore>((set, get) => ({
     }));
   },
 
-  deleteCourse: async (id) => {
+  deleteCourse: (id) => {
     set((oldState: CourseStore) => ({
       ...oldState,
       courses: oldState.courses?.filter((course) => course._id !== id),
+    }));
+  },
+
+  setUserCourses: (courses) => {
+    set((oldState: CourseStore) => ({
+      ...oldState,
+      userCourses: courses,
+    }));
+  },
+
+  createUserCourse: (course) => {
+    set((oldState: CourseStore) => ({
+      ...oldState,
+      userCourses: [...(oldState.userCourses || []), course],
+    }));
+  },
+
+  deleteUserCourse: (id) => {
+    set((oldState: CourseStore) => ({
+      ...oldState,
+      userCourses: oldState.userCourses?.filter((course) => course._id !== id),
     }));
   },
 }));
 
 export const useCourseSubscription = () => {
   const setCourses = useCourseStore((state) => state.setCourses);
+  const setUserCourses = useCourseStore((state) => state.setUserCourses);
   const setIsLoadingCourses = useCourseStore(
     (state) => state.setIsLoadingCourses
   );
 
-  const { data } = useQuery(
+  const { data: cursosData } = useQuery(
     ["courses"],
     async () => {
       const { data } = await api.get("/cursos", {
@@ -95,9 +125,9 @@ export const useCourseSubscription = () => {
   );
 
   useEffect(() => {
-    if (!data) return;
+    if (!cursosData) return;
 
     setIsLoadingCourses(false);
-    setCourses(data);
-  }, [data, setCourses, setIsLoadingCourses]);
+    setCourses(cursosData);
+  }, [cursosData, setCourses, setIsLoadingCourses, setUserCourses]);
 };
