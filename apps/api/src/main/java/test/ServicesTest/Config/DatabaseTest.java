@@ -11,6 +11,7 @@ public class DatabaseTest {
     public static void setupDatabase() {
         String uri = System.getenv("MONGODB_ATLAS_CONN");;
         client = MongoClients.create(uri);
+        client.startSession();
         database = client.getDatabase("test-db");
     }
 
