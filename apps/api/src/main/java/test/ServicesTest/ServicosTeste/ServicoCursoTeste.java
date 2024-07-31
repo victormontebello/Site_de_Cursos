@@ -1,6 +1,7 @@
 package test.ServicesTest.ServicosTeste;
 
 import com.mongodb.client.*;
+import com.mongodb.client.result.InsertOneResult;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.cache.annotation.Cacheable;
@@ -42,7 +43,7 @@ public class ServicoCursoTeste implements ICursoRepository {
     }
 
     @Override
-    public void Salvar(Curso curso) throws Exception {
+    public ObjectId Salvar(Curso curso) throws Exception {
         try {
             var conexao = MongoClients.create(MONGODB_ATLAS_CONN);
             conexao.startSession();
@@ -58,8 +59,10 @@ public class ServicoCursoTeste implements ICursoRepository {
                     .append("autorId", curso.getAutorId())
                     .append("data", curso.getDataDePublicacao());
 
-            colecao.insertOne(documento);
+            InsertOneResult resultado = colecao.insertOne(documento);
+            var id = resultado.getInsertedId().asObjectId().getValue();
             ConectorCloudTeste.EncerrarConexao(conexao);
+            return id;
         } catch (Exception e) {
             throw new Exception("Erro ao salvar curso", e);
         }

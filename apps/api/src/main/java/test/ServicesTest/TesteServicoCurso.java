@@ -11,6 +11,7 @@ import org.ufg.Infraestrutura.Servicos.ServicoUsuario;
 import org.ufg.Socket.Routes.ApiRoutes;
 import spark.Spark;
 import test.ServicesTest.Config.DatabaseTest;
+import test.ServicesTest.DadosTeste.DadosParaTeste;
 import test.ServicesTest.ServicosTeste.ServicoCursoTeste;
 
 import java.util.ArrayList;
@@ -46,19 +47,10 @@ public class TesteServicoCurso {
 
     @Test
     public void teste_deve_criar_curso() throws Exception {
-        var curso = new Curso();
-        curso.setNome("Curso de Teste");
-        curso.setDescricao("Descricao do curso de teste");
-        curso.setHoras(10);
-        curso.setValor(100);
-        curso.setPossuiCertificado(true);
-        curso.setStatus(StatusEnum.ATIVO);
-        curso.setCategorias(new ArrayList<>());
-        curso.setNumeroDeAulas(10);
-        curso.setAutorId(new ObjectId("66368c571d6ebe7f719e3c58"));
-        curso.setDataDePublicacao("2022-01-01");
+        var curso = DadosParaTeste.ObterCursoParaTeste();
         servicoCurso.Salvar(curso);
         var cursos = servicoCurso.obterTodos(null);
         assertEquals(cursos.size(), 1);
     }
 }
+

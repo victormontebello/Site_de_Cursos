@@ -46,8 +46,21 @@ public class CursosController {
             mapper.registerModule(module);
 
             var curso = mapper.readValue(json, Curso.class);
-            _servicoCurso.Salvar(curso);
-            return "Curso salvo com sucesso";
+            var id = _servicoCurso.Salvar(curso);
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(ObjectId.class, new JsonSerializer<ObjectId>() {
+                        @Override
+                        public JsonElement serialize(ObjectId src, Type typeOfSrc, JsonSerializationContext context) {
+                            return new JsonPrimitive(src.toHexString());
+                        }
+                    })
+                    .create();
+
+            String jsonResponse = gson.toJson(id);
+            res.type("application/json");
+            res.status(201);
+
+            return jsonResponse;
         } catch (Exception e) {
             res.type("application/json");
             res.status(500);

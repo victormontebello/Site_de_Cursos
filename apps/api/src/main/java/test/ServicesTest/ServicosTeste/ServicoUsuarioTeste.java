@@ -4,6 +4,7 @@ import com.mongodb.MongoClientException;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.InsertOneResult;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,7 +21,7 @@ public class ServicoUsuarioTeste implements IUsuarioRepository {
     public final String MONGODB_ATLAS_CONN = System.getenv("MONGODB_ATLAS_CONN");
 
     @Override
-    public void Salvar(Usuario usuario) throws Exception {
+    public ObjectId Salvar(Usuario usuario) throws Exception {
         try {
             var conexao = MongoClients.create(MONGODB_ATLAS_CONN);
             conexao.startSession();
@@ -42,8 +43,10 @@ public class ServicoUsuarioTeste implements IUsuarioRepository {
                     .append("isInstructor", usuario.IsInstructor)
                     .append("isPremium", usuario.IsPremium);
 
-            colecao.insertOne(documento);
+            InsertOneResult resultado = colecao.insertOne(documento);
+            var id = resultado.getInsertedId().asObjectId().getValue();
             ConectorCloudTeste.EncerrarConexao(conexao);
+            return id;
         }
         catch (Exception e) {
             throw new Exception("Erro ao salvar usuario", e);

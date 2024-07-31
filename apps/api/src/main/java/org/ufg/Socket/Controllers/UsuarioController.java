@@ -39,8 +39,21 @@ public class UsuarioController {
         var json = req.body();
         var mapper = new ObjectMapper();
         var usuario = mapper.readValue(json, Usuario.class);
-        _servicoUsuario.Salvar(usuario);
-        return "Usuário salvo com sucesso";
+        var id = _servicoUsuario.Salvar(usuario);
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(ObjectId.class, new JsonSerializer<ObjectId>() {
+                    @Override
+                    public JsonElement serialize(ObjectId src, Type typeOfSrc, JsonSerializationContext context) {
+                        return new JsonPrimitive(src.toHexString());
+                    }
+                })
+                .create();
+
+        String jsonResponse = gson.toJson(id);
+        res.type("application/json");
+        res.status(201);
+
+        return jsonResponse;
     };
 
     public static Route obterPorId = (req, res) -> {
