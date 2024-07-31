@@ -14,11 +14,17 @@ export default function UsersPage() {
           </h1>
         </div>
         <div className="w-full flex items-center gap-10 justify-start flex-wrap">
-          {allUsers?.map((u, index) => {
-            if (user?._id === u._id) return null;
+          {allUsers &&
+            allUsers?.length > 1 &&
+            allUsers.map((u, index) => {
+              if (user?._id === u._id) return null;
 
-            return <UserCard user={u} key={index} />;
-          })}
+              return <UserCard user={u} key={index} />;
+            })}
+
+          {(!allUsers || allUsers?.length === 1) && (
+            <p>Nenhum outro usuário registrado na plataforma</p>
+          )}
         </div>
       </div>
     </div>

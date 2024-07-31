@@ -17,6 +17,7 @@ import { Switch } from "../../../components/ui/switch.js";
 import { useUserStore } from "../../../stores/user.js";
 import { toast } from "sonner";
 import api from "../../../services/api.js";
+import { useEffect } from "react";
 
 const profileFormSchema = z.object({
   email: z
@@ -67,7 +68,7 @@ export function AccountForm() {
       const body = Object.assign({}, updatedUser);
       delete body._id;
 
-      await api.put(`/usuarios/66a2f36b3609232a718a52a6`, body);
+      await api.put(`/usuarios/${user._id}`, body);
 
       updateUser(updatedUser);
 
@@ -77,6 +78,13 @@ export function AccountForm() {
       toast.error("Falha ao atualizar perfil");
     }
   }
+
+  useEffect(() => {
+    if (!user) return;
+
+    form.setValue("email", user.email);
+    form.setValue("nome", user.nome);
+  }, [form, user]);
 
   return (
     <Form {...form}>

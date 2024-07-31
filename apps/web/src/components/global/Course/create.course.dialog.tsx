@@ -163,9 +163,9 @@ export default function CreateCourseDialog() {
               name="valor"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Carga Horária</FormLabel>
+                  <FormLabel>Valor</FormLabel>
                   <FormDescription className="!mt-0 !mb-2">
-                    Carga horária do curso em horas
+                    Valor do curso
                   </FormDescription>
                   <FormControl>
                     <Input

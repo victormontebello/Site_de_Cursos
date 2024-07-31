@@ -89,9 +89,6 @@ export default function CourseCard({ course }: CourseCardProps) {
   );
   const isTheCreatorOfTheCourse = course.autorId === user?._id;
 
-  console.log("course", course.nome, course._id);
-  console.log("user", user?._id);
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
